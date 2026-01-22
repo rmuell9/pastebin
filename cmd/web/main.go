@@ -33,27 +33,13 @@ func main() {
 		infoLog: infoLog,
 	}
 
-	// Init servers
-	mux := http.NewServeMux()
-	fileServer := http.FileServer(http.Dir("./ui/static/"))
-
-	// Register the file server as handler for all URL paths with "/static/"
-	mux.Handle("/static/", http.StripPrefix("/static", fileServer))
-
-	// Register application routes
-	mux.HandleFunc("/", app.home)
-	mux.HandleFunc("/snippet/view", app.snippetView)
-	mux.HandleFunc("snippet/create", app.snippetCreate)
-
 	srv := &http.Server{
 		Addr: *addr,
 		ErrorLog: errorLog,
-		Handler: mux,
+		Handler: app.routes(),
 	}
 
 	infoLog.Printf("Starting server on %s", *addr)
-
-	// Error-handling
 	err := srv.ListenAndServe()
 	errorLog.Fatal(err)
 }
