@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"flag"
+	"html/template"
 	"os"
 	"log"
 	"net/http"
@@ -15,13 +16,11 @@ type application struct {
 	errorLog *log.Logger
 	infoLog *log.Logger
 	snippets *models.SnippetModel
+	templateCache map[string]*template.Template
 }
 
 func main() {
-	// Localhost address
 	addr := flag.String("addr", ":4000", "HTTP network address")
-
-	// MySQL DSN
 	dsn := flag.String("dsn", "web:golang@/snippetbox?parseTime=true", 
 		"MySQL data source name")
 
@@ -43,10 +42,16 @@ func main() {
 
 	defer db.Close()
 
+	templateCache, err := newTemplateCache()
+	if err != nil {
+		errorLog.Fatal(err)
+	}
+
 	app := &application{
 		errorLog: errorLog,
 		infoLog: infoLog,
 		snippets: &models.SnippetModel{DB: db},
+		templateCache: templateCache,
 	}
 
 	srv := &http.Server{
