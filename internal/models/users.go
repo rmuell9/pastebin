@@ -33,8 +33,8 @@ func (m *UserModel) Insert(name, email, password string) error {
 	if err != nil {
 		return nil
 	}
-	stmt := `INSERT INTO users (name, email, hashed_password, created)
-	VALUES(?, ?, ?, UTC_TIMESTAMP())`
+		stmt := `INSERT INTO users (name, email, hashed_password, created)
+	VALUES(?, ?, ?, NOW())`
 
 	_, err = m.DB.Exec(stmt, name, email, string(hashedPassword))
 	if err != nil {
