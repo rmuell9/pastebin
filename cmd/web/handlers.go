@@ -47,6 +47,11 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	app.render(w, http.StatusOK, "home.tmpl.html", data)
 }
 
+func (app *application) about(w http.ResponseWriter, r *http.Request) {
+	data := app.newTemplateData(r)
+	app.render(w, http.StatusOK, "about.tmpl.html", data)
+}
+
 func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
 	params := httprouter.ParamsFromContext(r.Context())
 
@@ -164,6 +169,11 @@ func (app *application) userSignupPost(w http.ResponseWriter, r *http.Request) {
 	app.sessionManager.Put(r.Context(), "flash", "Your signup was successful. Please log in")
 
 	http.Redirect(w, r, "/user/login", http.StatusSeeOther)
+}
+
+func (app *application) userAccount(w http.ResponseWriter, r *http.Request) {
+	data := app.newTemplateData(r)
+	app.render(w, http.StatusOK, "account.tmpl.html", data)
 }
 
 func (app *application) userLogin(w http.ResponseWriter, r *http.Request) {
