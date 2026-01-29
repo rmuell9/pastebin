@@ -172,7 +172,21 @@ func (app *application) userSignupPost(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) userAccount(w http.ResponseWriter, r *http.Request) {
+	id := app.sessionManager.GetInt(r.Context(), "authenticatedUserID")
+	if id == 0 {
+		app.notFound(w)
+		return
+	}
+
+	user, err := app.users.Info(id)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
 	data := app.newTemplateData(r)
+	data.User = user
+
 	app.render(w, http.StatusOK, "account.tmpl.html", data)
 }
 

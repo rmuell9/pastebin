@@ -1,5 +1,4 @@
 package models
-
 import (
 	"database/sql"
 	"errors"
@@ -26,6 +25,7 @@ type UserModelInterface interface {
 	Insert(name, email, password string) error
 	Authenticate(email, password string) (int, error)
 	Exists(id int) (bool, error)
+	Info(id int) (*User, error)
 }
 
 func (m *UserModel) Insert(name, email, password string) error {
@@ -83,4 +83,16 @@ func (m *UserModel) Exists(id int) (bool, error) {
 
 	err := m.DB.QueryRow(stmt, id).Scan(&exists)
 	return exists, err
+}
+func (m *UserModel) Info(id int) (*User, error) {
+	stmt := `SELECT name, email, created FROM users WHERE id = ?`
+
+	row := m.DB.QueryRow(stmt, id)
+	u := &User{}
+	err := row.Scan(&u.Name, &u.Email, &u.Created)
+	if err != nil {
+		return nil, err
+	}
+
+	return u, nil
 }
