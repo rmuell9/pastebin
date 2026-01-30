@@ -84,6 +84,7 @@ func (m *UserModel) Exists(id int) (bool, error) {
 	err := m.DB.QueryRow(stmt, id).Scan(&exists)
 	return exists, err
 }
+
 func (m *UserModel) Info(id int) (*User, error) {
 	stmt := `SELECT name, email, created FROM users WHERE id = ?`
 
